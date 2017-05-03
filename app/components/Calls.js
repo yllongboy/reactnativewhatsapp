@@ -4,8 +4,8 @@ import {
   StyleSheet,
   Text,
   ListView,
+  TouchableOpacity,
   Image,
-  ScrollView,
   View
 } from 'react-native';
 
@@ -25,36 +25,42 @@ class Calls extends Component {
   }
 
   render() {
-    return (
-    <ListView
-      initialListSize={5}
-      enableEmptySections={true}
-      dataSource={this.state.peopleDataSource}
-      renderRow={(person) => { return this.renderPersonRow(person) }} />
-    )
+    if(this.state.loaded) {
+      return (
+        <ListView
+          initialListSize={5}
+          enableEmptySections={true}
+          dataSource={this.state.peopleDataSource}
+          renderRow={(person) => { return this.renderPersonRow(person) }} />
+      )
+    } else {
+      return (<Text onPress={() => {this.props.navigator.push({id:'callbox'}) }}>Retrieving Calls...</Text>)
+    }
   }
 
   renderPersonRow(person) {
     return (
-      <View style = {styles.listItemContainer}>
-        <View style= {styles.iconContainer}>
-          <Image source={{uri:person.image}} style={styles.initStyle} resizeMode='contain' />
-        </View>
-        <View style = {styles.callerDetailsContainer}>
-          <View style={styles.callerDetailsContainerWrap}>
-            <View style={styles.nameContainer}>
-              <Text>{person.first_name}</Text>
-              <View style={styles.dateContainer}>
-                <Icon name={person.missed ? "call-missed" : "call-received"} size={15} color={person.missed ? "#ed788b" : "#075e54"} />
-                <Text style={{ fontWeight:'400', color:'#666', fontSize:12 }}>{person.date} {person.time}</Text>
+      <TouchableOpacity onPress={() => {this.props.navigator.push({id:'callbox', image:person.image, name:person.first_name}) }}>
+        <View style = {styles.listItemContainer}>
+          <View style= {styles.iconContainer}>
+            <Image source={{uri:person.image}} style={styles.initStyle} resizeMode='contain' />
+          </View>
+          <View style = {styles.callerDetailsContainer}>
+            <View style={styles.callerDetailsContainerWrap}>
+              <View style={styles.nameContainer}>
+                <Text>{person.first_name}</Text>
+                <View style={styles.dateContainer}>
+                  <Icon name={person.missed ? "call-missed" : "call-received"} size={15} color={person.missed ? "#ed788b" : "#075e54"} />
+                  <Text style={{ fontWeight:'400', color:'#666', fontSize:12 }}>{person.date} {person.time}</Text>
+                </View>
               </View>
-            </View>
-            <View style={styles.callIconContainer}>
-              <Icon name="phone" color='#075e54' size={23} style={{ padding:5 }} />
+              <View style={styles.callIconContainer}>
+                <Icon name="phone" color='#075e54' size={23} style={{ padding:5 }} />
+              </View>
             </View>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
 
